@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <meta
+      name="description"
+      content="Desarrollo de PWA para el curso IIC3585-1 SECCIÓN 1"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="shortcut icon"
+      href="/images/application-16.png"
+      type="image/png"
+      sizes="16x16"
+    />
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Bienvenid@ a nuestra PWA</h1>
+    <p>
+      Este es un ejemplo básico de una Progressive Web App (PWA) hecho para el
+      curso IIC3585
+    </p>
+
+    <div class="container">
+      <div class="canvas-wrapper">
+        <div class="buttons-canvas">
+            <input type="file" id="upload" accept="image/*" />
+            <button onclick="removeImage()">Quitar imagen</button>
+        </div>
+        <canvas id="canvas"></canvas>
+      </div>
+      <div class="controls-wrapper">
+        <div class="controls">
+          <button onclick="applyEffect('grayscale')">Escala de grises</button>
+          <button onclick="applyEffect('invert')">Invertir color</button>
+          <button onclick="applyEffect('blur')">Blur</button>
+          <button onclick="undo()">Deshacer</button>
+          <button onclick="redo()">Rehacer</button>
+        </div>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>

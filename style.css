@@ -1,0 +1,91 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f4f9;
+    margin: 0 auto;
+    padding: 10px;
+    min-height: 100vh;
+    margin-bottom: 100px;
+}
+
+h1, p {
+    text-align: center;
+    margin-top: 2rem;
+    color: #333;
+}
+
+.container {
+    margin: auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 960px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.canvas-wrapper, .controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.buttons-canvas {
+    display: flex;
+    flex-direction: rc;
+    justify-content: center;
+    gap: 1rem;
+}
+
+canvas {
+    display: block;
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 8px;
+    margin: auto;
+    background-color: #8d8d8d;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+button, input[type="file"] {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #ac00db;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+button:hover, input[type="file"]:hover {
+    background-color: #6f1476;
+}
+
+@media (max-width: 768px) {
+    .container {
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .controls {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }   
+    .buttons-canvas {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+}
