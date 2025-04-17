@@ -9,14 +9,28 @@
       name="description"
       content="Desarrollo de PWA para el curso IIC3585-1 SECCIÓN 1"
     />
-    <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="style.css" />
+
+    <meta name="theme-color" content="#6f1476" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+
     <link
       rel="shortcut icon"
       href="/images/application-16.png"
       type="image/png"
       sizes="16x16"
     />
+
+    <link rel="apple-touch-icon" href="/images/icon512_rounded.png" />
+    <link rel="apple-touch-startup-image" href="/images/icon512_rounded.png" />
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("sw.js");
@@ -33,8 +47,8 @@
     <div class="container">
       <div class="canvas-wrapper">
         <div class="buttons-canvas">
-            <input type="file" id="upload" accept="image/*" />
-            <button onclick="removeImage()">Quitar imagen</button>
+          <input type="file" id="upload" accept="image/*" />
+          <button onclick="removeImage()">Quitar imagen</button>
         </div>
         <canvas id="canvas"></canvas>
       </div>
