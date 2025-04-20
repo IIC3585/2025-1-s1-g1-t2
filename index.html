@@ -51,17 +51,17 @@
       <div class="canvas-wrapper">
         <div class="buttons-canvas">
           <input type="file" id="upload" accept="image/*" />
-          <button onclick="removeImage()">Quitar imagen</button>
+          <button id='removeImage'>Quitar imagen</button>
         </div>
         <canvas id="canvas"></canvas>
       </div>
       <div class="controls-wrapper">
         <div class="controls">
-          <button onclick="applyEffect('grayscale')">Escala de grises</button>
-          <button onclick="applyEffect('invert')">Invertir color</button>
-          <button onclick="applyEffect('blur')">Blur</button>
-          <button onclick="undo()">Deshacer</button>
-          <button onclick="redo()">Rehacer</button>
+          <button id='grayscale'>Escala de grises</button>
+          <button id='invert'>Invertir color</button>
+          <button id='blur'>Blur</button>
+          <button id='undo'>Deshacer</button>
+          <button id='redo'>Rehacer</button>
         </div>
       </div>
     </div>
