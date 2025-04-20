@@ -6,10 +6,22 @@ const filesToCache = [
   "index.html",
   "index.js",
   "style.css",
-  "index.js",
-  "style.css",
-  "/images/icon512_rounded.png",
-  "/images/application-16.png"
+  "https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap",
+  "./images/icon512_rounded.png",
+  "./images/icon512_maskable.png",
+  "./images/application-16.png",
+  "./images/application-48.png",
+  "./images/application-64.png",
+  "./images/application-72.png",
+  "./images/application-96.png",
+  "./images/application-128.png",
+  "./images/application-144.png",
+  "./images/application-152.png",
+  "./images/application-180.png",
+  "./images/application-192.png",
+  "./images/application-256.png",
+  "./images/application-512.png",
+  './wasmfunctions/pkg/wasm_grayscale.js',
 ];
 
 // Instalar el service worker

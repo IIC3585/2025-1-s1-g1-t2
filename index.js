@@ -1,4 +1,5 @@
-const WASM_MODULE = {
+
+let WASM_MODULE = {
   initialized: false,
   grayscale: null
 };
