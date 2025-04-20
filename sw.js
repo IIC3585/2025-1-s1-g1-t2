@@ -64,12 +64,10 @@ self.addEventListener("fetch", (event) => {
       if (response) {
         return response;
       }
-      return fetch(event.request).then((response) => {
-        return caches.open(cacheName).then((cache) => {
-          cache.put(event.request, response.clone());
-          return response;
-        });
-      });
+      return fetch(event.request)})
+    .catch((error) => {
+      console.error("Error fetching files:", error);
     })
-  );
+  )
 });
+  
