@@ -6,9 +6,10 @@ const filesToCache = [
   "index.html",
   "index.js",
   "style.css",
+  "index.js",
+  "style.css",
   "/images/icon512_rounded.png",
-  "/images/application-16.png",
-  "/wasmfunctions/pkg/wasm_grayscale.js",
+  "/images/application-16.png"
 ];
 
 // Instalar el service worker
