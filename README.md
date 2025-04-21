@@ -20,17 +20,23 @@ El proyecto está organizado de la siguiente manera:
 
 ```
 .
+├── images/              # Imágenes PNG para PWA
+├── css/                 # Carpeta para CSS
+│   ├── style.css        # Estilos CSS        
 ├── wasmfunctions/       # Código Rust compilado a Wasm
 │   ├── pkg/             # Archivos generados por wasm-pack
 │   ├── src/             # Código fuente Rust
 │   │   └── lib.rs       # Implementación de funciones Wasm
 │   ├── Cargo.toml       # Configuración del proyecto Rust
 │   └── Cargo.lock       # Versiones exactas de dependencias
-├── index.html           # Interfaz principal de la aplicación
-├── index.js             # Lógica de la aplicación en JavaScript
-├── style.css            # Estilos CSS para la interfaz
-├── sw.js                # Service Worker para funcionalidades PWA
-├── manifest.json        # Configuración de la PWA
+├── js/                  # Código JS
+│   ├── db.js            # IndexedDB CRUD operaciones
+│   ├── main.js          # Inicializador JS
+│   ├── ui.js            # Manejo de UI, canvas e historial
+│   └── wasm.js          # Inicialización y wrappers WASM
+├── index.html           # Interfaz principal
+├── sw.js                # Service Worker para PWA
+├── manifest.json        # Configuración PWA
 └── README.md            # Este archivo
 ```
 

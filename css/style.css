@@ -1,0 +1,171 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #f4f4f9;
+    margin: 0 auto;
+    padding: 10px;
+    min-height: 100vh;
+    margin-bottom: 100px;
+}
+
+h1,
+h2,
+p {
+    text-align: center;
+    margin-top: 2rem;
+    color: #333;
+}
+
+canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 80%;
+    border-radius: 8px;
+    margin: auto;
+    background-color: #8d8d8d;
+    scale: 0.7;
+}
+
+button,
+input[type="file"] {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background-color: #ac00db;
+    color: white;
+    transition: background-color 0.3s;
+    font-family: "Poppins", sans-serif;
+}
+
+button:hover,
+input[type="file"]:hover {
+    background-color: #6f1476;
+}
+
+#install-button {
+    background-color: #6f1476;
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+    margin: 1rem auto;
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 200px;
+}
+
+#install-button:hover {
+    background-color: #4a0e4f;
+}
+
+.container {
+    margin: auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    max-width: 960px;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.container-2 {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    max-width: 960px;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.canvas-wrapper,
+.controls-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+}
+
+.buttons-canvas {
+    display: flex;
+    flex-direction: rc;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+div.scroll-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    background-color: #f4f4f9;
+    white-space: nowrap;
+    padding: 20px;
+    justify-content: flex-start;
+    gap: 1rem;
+    width: 90%;
+    max-width: 90%;
+    scroll-snap-type: x mandatory;
+
+}
+
+div.scroll-container img {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+div.scroll-container img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .controls {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .buttons-canvas {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    canvas {
+        max-width: 100%;
+        max-height: 80%;
+        scale: 1;
+    }
+}
