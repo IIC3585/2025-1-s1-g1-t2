@@ -40,6 +40,9 @@ El proyecto está organizado de la siguiente manera:
 └── README.md            # Este archivo
 ```
 
+> [!NOTE]
+> Toda la documentación de las funciones JS se encuentra en los propios archivos
+
 ## Detalles del Proyecto
 
 ### Herramientas Utilizadas
