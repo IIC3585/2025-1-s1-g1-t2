@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>PWA</title>
+    <title>PWA con WASM</title>
     <meta
       name="description"
-      content="Desarrollo de PWA para el curso IIC3585-1 SECCIÓN 1"
+      content="Desarrollo de PWA con WASM para el curso IIC3585-1 SECCIÓN 1"
     />
 
     <meta name="theme-color" content="#6f1476" />
@@ -53,6 +53,7 @@
         <div class="buttons-canvas">
           <input type="file" id="upload" accept="image/*" />
           <button onclick="removeImage()">Quitar imagen</button>
+          <button id="save-button">Guardar imagen</button>
         </div>
         <canvas id="canvas"></canvas>
       </div>
@@ -66,7 +67,10 @@
         </div>
       </div>
     </div>
-    
+
+    <h2>Imágenes guardadas</h2>
+    <div id="saved-images" class="scroll-container"></div>
+
     <script>
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker

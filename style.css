@@ -7,7 +7,7 @@ body {
     margin-bottom: 100px;
 }
 
-h1, p {
+h1, h2, p {
     text-align: center;
     margin-top: 2rem;
     color: #333;
@@ -50,6 +50,31 @@ canvas {
     border-radius: 8px;
     margin: auto;
     background-color: #8d8d8d;
+}
+
+div.scroll-container {
+    background-color: #f4f4f9;
+    overflow: auto;
+    white-space: nowrap;
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    gap: 1rem;
+}
+
+div.scroll-container img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+div.scroll-container img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .controls {
