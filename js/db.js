@@ -29,8 +29,7 @@ export function initDB(){
             db = e.target.result;
             if (!db.objectStoreNames.contains(STORE_NAME)) {
                 const store = db.createObjectStore(STORE_NAME, { keyPath: "id" });
-                store.createIndex("byDate", "date", { unique: true });
-            }
+                store.createIndex("byDate", "date", { unique: false });
         };
 
         request.onsuccess = (e) => { db = e.target.result; resolve(db); renderSavedThumbs(); };
