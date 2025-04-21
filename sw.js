@@ -59,9 +59,6 @@ self.addEventListener("activate", (event) => {
 })
 
 // Interceptar las solicitudes de red
-
-
-
 // y servir los archivos desde la caché si están disponibles
 self.addEventListener("fetch", (event) => {
     // Handle WASM files with correct MIME type

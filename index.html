@@ -40,14 +40,6 @@
 
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="style.css" />
-    <script>
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker
-          .register("sw.js")
-          .then((reg) => console.log("Service Worker registered", reg))
-          .catch((err) => console.warn("Service Worker not registered", err));
-      }
-    </script>
   </head>
   <body>
     <h1>Bienvenid@ a nuestra PWA</h1>
@@ -74,6 +66,69 @@
         </div>
       </div>
     </div>
+    
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("sw.js")
+          .then((reg) => console.log("Service Worker registered", reg))
+          .catch((err) => console.warn("Service Worker not registered", err));
+      }
+    </script>
+    <script>
+      let deferredPrompt;
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+
+        if (!document.getElementById("install-button")) {
+          const installButton = document.createElement("button");
+          installButton.id = "install-button";
+          installButton.innerText = "Instalar PWA";
+          installButton.style.display = "block";
+          installButton.style.margin = "0 auto";
+          installButton.style.padding = "10px 20px";
+          installButton.style.backgroundColor = "#6f1476";
+          installButton.style.color = "#fff";
+          installButton.style.border = "none";
+          installButton.style.borderRadius = "5px";
+          installButton.style.cursor = "pointer";
+          installButton.style.fontSize = "16px";
+          installButton.style.fontFamily = "Poppins, sans-serif";
+          installButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
+          installButton.style.transition = "background-color 0.3s ease";
+          installButton.style.textAlign = "center";
+          installButton.style.width = "200px";
+          installButton.style.marginTop = "20px";
+          installButton.style.zIndex = "1000"; 
+
+          document.body.appendChild(installButton);
+        }
+
+        const installButton = document.getElementById("install-button");
+
+        installButton.addEventListener("click", () => {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === "accepted") {
+              console.log("Usuario aceptó la instalación de la PWA");
+            } else {
+              console.log("Usuario rechazó la instalación de la PWA");
+              deferredPrompt = null;
+            }
+          });
+        });
+      });
+
+      window.addEventListener("appinstalled", (e) => {
+        console.log("PWA instalada");
+        const installButton = document.getElementById("install-button");
+        if (installButton) {
+          installButton.remove();
+        }
+      });
+
+    </script>
     <script src="index.js"></script>
   </body>
 </html>
