@@ -21,8 +21,8 @@ const filesToCache = [
   "./images/application-192.png",
   "./images/application-256.png",
   "./images/application-512.png",
-  './wasmfunctions/pkg/wasm_grayscale.js',
-  './wasmfunctions/pkg/wasm_grayscale_bg.wasm',
+  './wasmfunctions/pkg/wasm_filters.js',
+  './wasmfunctions/pkg/wasm_filters_bg.wasm',
   // agregar aquí las otras funciones wasm compiladas
 ];
 

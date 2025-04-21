@@ -1,9 +1,14 @@
 
 let WASM_MODULE = {
   initialized: false,
-  grayscale: null
+  grayscale: null,
+  sepia: null,
+  cold_inverse: null,
+  spectral_glow: null,
 };
 
+const MAX_CANVAS_WIDTH = 800;
+const MAX_CANVAS_HEIGHT = 600;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const upload = document.getElementById("upload");
@@ -14,10 +19,10 @@ const MAX_SIZE_MB = 5;
 
 async function initializeWASM() {
     try {
-      const wasmModule = await import('./wasmfunctions/pkg/wasm_grayscale.js');
+      const wasmModule = await import('./wasmfunctions/pkg/wasm_filters.js');
       
       // Explicitly set the WASM file location
-      const wasmPath = './wasmfunctions/pkg/wasm_grayscale_bg.wasm';
+      const wasmPath = './wasmfunctions/pkg/wasm_filters_bg.wasm';
       const wasmResponse = await fetch(wasmPath);
       
       if (!wasmResponse.ok) {
@@ -31,6 +36,10 @@ async function initializeWASM() {
     });
       // Initialize the WASM functions
       WASM_MODULE.grayscale = wasmModule.grayscale;
+      WASM_MODULE.sepia = wasmModule.sepia;
+      WASM_MODULE.cold_inverse = wasmModule.cold_inverse;
+      WASM_MODULE.spectral_glow = wasmModule.spectral_glow;
+      // Set the initialized flag to true
       WASM_MODULE.initialized = true;
       
       console.log("WASM initialized successfully");
@@ -44,8 +53,9 @@ async function initializeWASM() {
 function initializeApp() {
     upload.addEventListener("change", handleImageUpload);
     document.getElementById("grayscale").addEventListener("click", () => applyEffect("grayscale"));
-    document.getElementById("invert").addEventListener("click", () => applyEffect("invert"));
-    document.getElementById("blur").addEventListener("click", () => applyEffect("blur"));
+    document.getElementById("sepia").addEventListener("click", () => applyEffect("sepia"));
+    document.getElementById("coldInverse").addEventListener("click", () => applyEffect("coldInverse"));
+    document.getElementById("spectralGlow").addEventListener("click", () => applyEffect("spectralGlow"));
     document.getElementById("undo").addEventListener("click", undo);
     document.getElementById("redo").addEventListener("click", redo);
     document.getElementById("removeImage").addEventListener("click", removeImage);
@@ -66,14 +76,13 @@ async function applyEffect(effectName) {
       alert("Primero carga una imagen");
       return;
   }
-
   try {
+    if (!WASM_MODULE.initialized) {
+        console.warn("WASM no inicializado, inicializando ahora...");
+      await initializeWASM();
+    }
       switch (effectName) {
           case "grayscale":
-              if (!WASM_MODULE.initialized) {
-                    console.warn("WASM no inicializado, inicializando ahora...");
-                  await initializeWASM();
-              }
               const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
               const wasmResult = WASM_MODULE.grayscale(
                   new Uint8Array(imageData.data.buffer),
@@ -83,13 +92,35 @@ async function applyEffect(effectName) {
               applyImageData(new Uint8ClampedArray(wasmResult));
               break;
 
-          case "invert":
-              applyJavaScriptEffect(invertPixels);
-              break;
+          case "sepia":
+                  const sepiaData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const sepiaResult = WASM_MODULE.sepia(
+                    new Uint8Array(sepiaData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(sepiaResult));
+                  break;
 
-          case "blur":
-              applyBlurEffect();
-              break;
+                case "coldInverse":
+                  const coldInverseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const coldInverseResult = WASM_MODULE.cold_inverse(
+                    new Uint8Array(coldInverseData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(coldInverseResult));
+                  break;
+
+                case "spectralGlow":
+                  const spectralGlowData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const spectralGlowResult = WASM_MODULE.spectral_glow(
+                    new Uint8Array(spectralGlowData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(spectralGlowResult));
+                  break;
 
           default:
               console.warn("Efecto desconocido:", effectName);
@@ -100,32 +131,6 @@ async function applyEffect(effectName) {
   }
 }
 
-function invertPixels(imageData) {
-  const data = imageData.data;
-  for (let i = 0; i < data.length; i += 4) {
-      data[i] = 255 - data[i];     // R
-      data[i + 1] = 255 - data[i + 1]; // G
-      data[i + 2] = 255 - data[i + 2]; // B
-  }
-  return imageData;
-}
-
-function applyJavaScriptEffect(effectFunction) {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const modifiedData = effectFunction(imageData);
-  ctx.putImageData(modifiedData, 0, 0);
-  saveState();
-}
-
-function applyBlurEffect() {
-  ctx.filter = "blur(5px)";
-  ctx.drawImage(canvas, 0, 0);
-  ctx.filter = "none";
-  saveState();
-}
-
-
-// ============= Funciones auxiliares =============
 function handleImageUpload(e) {
     const file = e.target.files[0];
     if (!file) return;
