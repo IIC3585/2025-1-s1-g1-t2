@@ -39,7 +39,7 @@
     />
 
     <link rel="manifest" href="manifest.json" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <h1>Bienvenid@ a nuestra PWA</h1>
@@ -55,7 +55,7 @@
           <button id="save-button">Guardar imagen</button>
           <button id='removeImage'>Quitar imagen</button>
         </div>
-        <canvas id="canvas"></canvas>
+        <canvas id="canvas" width="800" height="600"></canvas>
       </div>
       <div class="controls-wrapper">
         <div class="controls">
@@ -69,8 +69,11 @@
       </div>
     </div>
 
-    <h2>Imágenes guardadas</h2>
-    <div id="saved-images" class="scroll-container"></div>
+    <div class="container-2">
+      <h2>Imágenes guardadas</h2>
+      <div id="saved-images" class="scroll-container"></div>
+      <button id="clear-images">Eliminar todas las imágenes</button>
+    </div>
 
     <script>
       if ("serviceWorker" in navigator) {
@@ -90,22 +93,6 @@
           const installButton = document.createElement("button");
           installButton.id = "install-button";
           installButton.innerText = "Instalar PWA";
-          installButton.style.display = "block";
-          installButton.style.margin = "0 auto";
-          installButton.style.padding = "10px 20px";
-          installButton.style.backgroundColor = "#6f1476";
-          installButton.style.color = "#fff";
-          installButton.style.border = "none";
-          installButton.style.borderRadius = "5px";
-          installButton.style.cursor = "pointer";
-          installButton.style.fontSize = "16px";
-          installButton.style.fontFamily = "Poppins, sans-serif";
-          installButton.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.2)";
-          installButton.style.transition = "background-color 0.3s ease";
-          installButton.style.textAlign = "center";
-          installButton.style.width = "200px";
-          installButton.style.marginTop = "20px";
-          installButton.style.zIndex = "1000"; 
 
           document.body.appendChild(installButton);
         }
@@ -134,6 +121,6 @@
       });
 
     </script>
-    <script src="index.js"></script>
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>

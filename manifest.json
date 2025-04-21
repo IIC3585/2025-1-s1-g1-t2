@@ -1,5 +1,5 @@
 {
-  "name": "Grupo 1",
+  "name": "Grupo 1 - PWA",
   "short_name": "Grupo 1",
   "description": "Desarrollo de PWA con WASM",
   "start_url": "./?utm_source=web_app_manifest",

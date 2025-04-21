@@ -289,11 +289,3 @@ function restoreState(dataUrl) {
     img.src = dataUrl;
 }
 
-function removeImage() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    canvas.width = 800;
-    canvas.height = 600;
-    upload.value = "";
-    history = [];
-    redoStack = [];
-}
