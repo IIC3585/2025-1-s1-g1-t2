@@ -22,6 +22,7 @@ const filesToCache = [
   "./images/application-256.png",
   "./images/application-512.png",
   './wasmfunctions/pkg/wasm_grayscale.js',
+  './wasmfunctions/pkg/wasm_grayscale_bg.wasm'
 ];
 
 // Instalar el service worker
@@ -58,17 +59,32 @@ self.addEventListener("activate", (event) => {
 })
 
 // Interceptar las solicitudes de red
+
+
+
 // y servir los archivos desde la caché si están disponibles
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      if (response) {
-        return response;
-      }
-      return fetch(event.request)})
-    .catch((error) => {
-      console.error("Error fetching files:", error);
-    })
-  )
+    // Handle WASM files with correct MIME type
+    if (event.request.url.endsWith('.wasm')) {
+      event.respondWith(
+        fetch(event.request, { 
+          headers: { 'Content-Type': 'application/wasm' }
+        }).catch(() => caches.match(event.request))
+      );
+      return;
+    }
+
+    // Default cache-first strategy for other files
+    event.respondWith(
+      caches.match(event.request).then(response => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request)})
+      .catch((error) => {
+        console.error("Error fetching files:", error);
+      })
+    );
+
 });
   

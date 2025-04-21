@@ -13,19 +13,35 @@ let redoStack = [];
 const MAX_SIZE_MB = 5;
 
 async function initializeWASM() {
-  try {
+    try {
       const wasmModule = await import('./wasmfunctions/pkg/wasm_grayscale.js');
-      await wasmModule.default();
       
+      // Explicitly set the WASM file location
+      const wasmPath = './wasmfunctions/pkg/wasm_grayscale_bg.wasm';
+      const wasmResponse = await fetch(wasmPath);
+      
+      if (!wasmResponse.ok) {
+        throw new Error(`Failed to fetch WASM file: ${wasmResponse.status}`);
+      }
+      
+      const wasmBytes = await wasmResponse.arrayBuffer();
+      // Pass a single object to the initialization function
+      await wasmModule.default({
+        wasmBinary: wasmBytes,
+    });
+      console.log("WASM module loaded successfully");
+      // Initialize the WASM functions
+      console.log("WASM :load module", wasmModule);
       WASM_MODULE.grayscale = wasmModule.grayscale;
       WASM_MODULE.initialized = true;
       
-      console.log("WASM inicializado correctamente");
-  } catch (error) {
-      console.error("Error inicializando WASM:", error);
+      console.log("WASM initialized successfully");
+      return true;
+    } catch (error) {
+      console.error("Error initializing WASM:", error);
       throw error;
+    }
   }
-}
 
 function initializeApp() {
     upload.addEventListener("change", handleImageUpload);
@@ -37,8 +53,8 @@ function initializeApp() {
     document.getElementById("removeImage").addEventListener("click", removeImage);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  initializeWASM().catch((error) => {
+document.addEventListener("DOMContentLoaded", async () => {
+  await initializeWASM().catch((error) => {
       console.error("Error inicializando WASM:", error);
   }).then(() => {
       WASM_MODULE.initialized = true;
@@ -57,6 +73,7 @@ async function applyEffect(effectName) {
       switch (effectName) {
           case "grayscale":
               if (!WASM_MODULE.initialized) {
+                    console.warn("WASM no inicializado, inicializando ahora...");
                   await initializeWASM();
               }
               const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
