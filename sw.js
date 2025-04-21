@@ -22,7 +22,8 @@ const filesToCache = [
   "./images/application-256.png",
   "./images/application-512.png",
   './wasmfunctions/pkg/wasm_grayscale.js',
-  './wasmfunctions/pkg/wasm_grayscale_bg.wasm'
+  './wasmfunctions/pkg/wasm_grayscale_bg.wasm',
+  // agregar aquí las otras funciones wasm compiladas
 ];
 
 // Instalar el service worker

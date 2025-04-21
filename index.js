@@ -29,9 +29,7 @@ async function initializeWASM() {
       await wasmModule.default({
         wasmBinary: wasmBytes,
     });
-      console.log("WASM module loaded successfully");
       // Initialize the WASM functions
-      console.log("WASM :load module", wasmModule);
       WASM_MODULE.grayscale = wasmModule.grayscale;
       WASM_MODULE.initialized = true;
       
@@ -139,23 +137,19 @@ function handleImageUpload(e) {
     }
 
     const reader = new FileReader();
-    reader.onload = (event) => {
-        img.onload = () => {
-            resizeCanvasToImage();
-            ctx.drawImage(img, 0, 0);
-            saveState();
+    reader.onload = function (event) {
+        img.onload = function () {
+          const scale = Math.min(MAX_CANVAS_WIDTH / img.width, MAX_CANVAS_HEIGHT / img.height);
+          const newWidth = img.width * scale;
+          const newHeight = img.height * scale;
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+          ctx.drawImage(img, 0, 0, newWidth, newHeight);
+          saveState();
         };
         img.src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-function resizeCanvasToImage() {
-    const maxWidth = window.innerWidth * 0.9;
-    const maxHeight = window.innerHeight * 0.6;
-    let ratio = Math.min(maxWidth / img.width, maxHeight / img.height);
-    canvas.width = img.width * ratio;
-    canvas.height = img.height * ratio;
+      };
+      if (file) reader.readAsDataURL(file);
 }
 
 function applyImageData(data) {
