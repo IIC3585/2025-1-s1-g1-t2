@@ -21,6 +21,9 @@ const filesToCache = [
   "./images/application-192.png",
   "./images/application-256.png",
   "./images/application-512.png",
+  './wasmfunctions/pkg/wasm_filters.js',
+  './wasmfunctions/pkg/wasm_filters_bg.wasm',
+  // agregar aquí las otras funciones wasm compiladas
 ];
 
 // Instalar el service worker
@@ -28,7 +31,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
       return cache.addAll(filesToCache)
-      .then(() => self.skipWaiting())
+        .then(() => self.skipWaiting())
     }).catch((error) => {
       console.error("Error caching files:", error);
     })
@@ -37,7 +40,7 @@ self.addEventListener("install", (event) => {
 
 // Funcione sin conexión
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [cacheName];
+  const cacheWhitelist = [ cacheName ];
 
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -49,24 +52,34 @@ self.addEventListener("activate", (event) => {
         })
       );
     })
-    .then(() => self.clients.claim())
-    .catch((error) => {
-      console.error("Error during service worker activation:", error);
-    })
+      .then(() => self.clients.claim())
+      .catch((error) => {
+        console.error("Error during service worker activation:", error);
+      })
   );
 })
 
-// Interceptar las solicitudes de red
-// y servir los archivos desde la caché si están disponibles
+
 self.addEventListener("fetch", (event) => {
+  // Default cache-first strategy for other files
   event.respondWith(
-    caches.match(event.request).then((response) => {
+    caches.match(event.request).then(response => {
       if (response) {
         return response;
       }
-      return fetch(event.request)})
-    .catch((error) => {
-      console.error("Error fetching files:", error);
+
+      if (event.request.url.endsWith('.wasm')) {
+        return fetch(event.request, {
+          headers: { 'Content-Type': 'application/wasm' }
+        });
+      }
+      
+      return fetch(event.request)
+
     })
-  )
+      .catch((error) => {
+        console.error("Error fetching files:", error);
+      })
+  );
+
 });

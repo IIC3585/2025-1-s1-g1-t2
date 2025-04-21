@@ -1,0 +1,19 @@
+# Rust
+# directorio de compilación
+*/target/* 
+# dependencias de rust
+Cargo.lock
+
+# WASM
+*/pkg/*
+*.wasm
+
+# Node.js (si usas herramientas como webpack)
+node_modules/
+package-lock.json
+
+# Entorno
+.env
+.DS_Store
+.idea/
+.vscode/

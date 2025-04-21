@@ -93,6 +93,17 @@ function loadImage(dataUrl) {
 }
 
 // ----- Canvas setup -----
+
+let WASM_MODULE = {
+  initialized: false,
+  grayscale: null,
+  sepia: null,
+  cold_inverse: null,
+  spectral_glow: null,
+};
+
+const MAX_CANVAS_WIDTH = 800;
+const MAX_CANVAS_HEIGHT = 600;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const upload = document.getElementById("upload");
@@ -102,96 +113,187 @@ let history = [];
 let redoStack = [];
 const MAX_SIZE_MB = 5;
 
-upload.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (file && file.size > MAX_SIZE_MB * 1024 * 1024) {
-    alert("El archivo excede el tamaño máximo de " + MAX_SIZE_MB + "MB.");
-    upload.value = "";
-    return;
+async function initializeWASM() {
+    try {
+      const wasmModule = await import('./wasmfunctions/pkg/wasm_filters.js');
+      
+      // Explicitly set the WASM file location
+      const wasmPath = './wasmfunctions/pkg/wasm_filters_bg.wasm';
+      const wasmResponse = await fetch(wasmPath);
+      
+      if (!wasmResponse.ok) {
+        throw new Error(`Failed to fetch WASM file: ${wasmResponse.status}`);
+      }
+      
+      const wasmBytes = await wasmResponse.arrayBuffer();
+      // Pass a single object to the initialization function
+      await wasmModule.default({
+        wasmBinary: wasmBytes,
+    });
+      // Initialize the WASM functions
+      WASM_MODULE.grayscale = wasmModule.grayscale;
+      WASM_MODULE.sepia = wasmModule.sepia;
+      WASM_MODULE.cold_inverse = wasmModule.cold_inverse;
+      WASM_MODULE.spectral_glow = wasmModule.spectral_glow;
+      // Set the initialized flag to true
+      WASM_MODULE.initialized = true;
+      
+      console.log("WASM initialized successfully");
+      return true;
+    } catch (error) {
+      console.error("Error initializing WASM:", error);
+      throw error;
+    }
   }
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    img.onload = function () {
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-      saveState();
-    };
-    img.src = event.target.result;
-  };
-  if (file) reader.readAsDataURL(file);
-});
 
 saveBtn.addEventListener("click", saveImage);
 
-function saveState() {
-  history.push(canvas.toDataURL());
-  if (history.length > 50) history.shift();
-  redoStack = [];
+function initializeApp() {
+    upload.addEventListener("change", handleImageUpload);
+    document.getElementById("grayscale").addEventListener("click", () => applyEffect("grayscale"));
+    document.getElementById("sepia").addEventListener("click", () => applyEffect("sepia"));
+    document.getElementById("coldInverse").addEventListener("click", () => applyEffect("coldInverse"));
+    document.getElementById("spectralGlow").addEventListener("click", () => applyEffect("spectralGlow"));
+    document.getElementById("undo").addEventListener("click", undo);
+    document.getElementById("redo").addEventListener("click", redo);
+    document.getElementById("removeImage").addEventListener("click", removeImage);
 }
 
-function restoreState(dataUrl) {
-  const img = new Image();
-  img.onload = function () {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-  };
-  img.src = dataUrl;
+document.addEventListener("DOMContentLoaded", async () => {
+  await initializeWASM().catch((error) => {
+      console.error("Error inicializando WASM:", error);
+  }).then(() => {
+      WASM_MODULE.initialized = true;
+      window.wasmInitialized = true;
+  });
+  initializeApp();
+});
+
+async function applyEffect(effectName) {
+  if (!img) {
+      alert("Primero carga una imagen");
+      return;
+  }
+  try {
+    if (!WASM_MODULE.initialized) {
+        console.warn("WASM no inicializado, inicializando ahora...");
+      await initializeWASM();
+    }
+      switch (effectName) {
+          case "grayscale":
+              const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+              const wasmResult = WASM_MODULE.grayscale(
+                  new Uint8Array(imageData.data.buffer),
+                  canvas.width,
+                  canvas.height
+              );
+              applyImageData(new Uint8ClampedArray(wasmResult));
+              break;
+
+          case "sepia":
+                  const sepiaData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const sepiaResult = WASM_MODULE.sepia(
+                    new Uint8Array(sepiaData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(sepiaResult));
+                  break;
+
+                case "coldInverse":
+                  const coldInverseData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const coldInverseResult = WASM_MODULE.cold_inverse(
+                    new Uint8Array(coldInverseData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(coldInverseResult));
+                  break;
+
+                case "spectralGlow":
+                  const spectralGlowData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                  const spectralGlowResult = WASM_MODULE.spectral_glow(
+                    new Uint8Array(spectralGlowData.data.buffer),
+                    canvas.width,
+                    canvas.height
+                  );
+                  applyImageData(new Uint8ClampedArray(spectralGlowResult));
+                  break;
+
+          default:
+              console.warn("Efecto desconocido:", effectName);
+      }
+  } catch (error) {
+      console.error("Error aplicando efecto:", error);
+      alert(`Error: ${error.message}`);
+  }
+}
+
+function handleImageUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert(`La imagen excede el límite de ${MAX_SIZE_MB}MB`);
+        upload.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        img.onload = function () {
+          const scale = Math.min(MAX_CANVAS_WIDTH / img.width, MAX_CANVAS_HEIGHT / img.height);
+          const newWidth = img.width * scale;
+          const newHeight = img.height * scale;
+          canvas.width = newWidth;
+          canvas.height = newHeight;
+          ctx.drawImage(img, 0, 0, newWidth, newHeight);
+          saveState();
+        };
+        img.src = event.target.result;
+      };
+      if (file) reader.readAsDataURL(file);
+}
+
+function applyImageData(data) {
+    ctx.putImageData(new ImageData(data, canvas.width, canvas.height), 0, 0);
+    saveState();
+}
+
+function saveState() {
+    history.push(canvas.toDataURL());
+    if (history.length > 20) history.shift();
+    redoStack = [];
 }
 
 function undo() {
-  if (history.length > 1) {
-    redoStack.push(history.pop());
-    restoreState(history[history.length - 1]);
-  }
+    if (history.length > 1) {
+        redoStack.push(history.pop());
+        restoreState(history[history.length - 1]);
+    }
 }
 
 function redo() {
-  if (redoStack.length > 0) {
-    const state = redoStack.pop();
-    history.push(state);
-    restoreState(state);
-  }
+    if (redoStack.length > 0) {
+        history.push(redoStack.pop());
+        restoreState(history[history.length - 1]);
+    }
 }
 
-function applyEffect(effect) {
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-
-  for (let i = 0; i < data.length; i += 4) {
-    let r = data[i];
-    let g = data[i + 1];
-    let b = data[i + 2];
-
-    if (effect === "grayscale") {
-      let avg = (r + g + b) / 3;
-      data[i] = data[i + 1] = data[i + 2] = avg;
-    }
-
-    if (effect === "invert") {
-      data[i] = 255 - r;
-      data[i + 1] = 255 - g;
-      data[i + 2] = 255 - b;
-    }
-  }
-
-  if (effect === "blur") {
-    ctx.filter = "blur(2px)";
-    ctx.drawImage(canvas, 0, 0);
-    ctx.filter = "none";
-    saveState();
-    return;
-  }
-
-  ctx.putImageData(imageData, 0, 0);
-  saveState();
+function restoreState(dataUrl) {
+    const img = new Image();
+    img.onload = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+    };
+    img.src = dataUrl;
 }
 
 function removeImage() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  canvas.width = 0;
-  canvas.height = 0;
-  upload.value = "";
-  history = [];
-  redoStack = [];
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    canvas.width = 800;
+    canvas.height = 600;
+    upload.value = "";
+    history = [];
+    redoStack = [];
 }
