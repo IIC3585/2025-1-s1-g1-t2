@@ -31,7 +31,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(cacheName).then((cache) => {
       return cache.addAll(filesToCache)
-      .then(() => self.skipWaiting())
+        .then(() => self.skipWaiting())
     }).catch((error) => {
       console.error("Error caching files:", error);
     })
@@ -40,7 +40,7 @@ self.addEventListener("install", (event) => {
 
 // Funcione sin conexión
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [cacheName];
+  const cacheWhitelist = [ cacheName ];
 
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -52,37 +52,37 @@ self.addEventListener("activate", (event) => {
         })
       );
     })
-    .then(() => self.clients.claim())
-    .catch((error) => {
-      console.error("Error during service worker activation:", error);
-    })
+      .then(() => self.clients.claim())
+      .catch((error) => {
+        console.error("Error during service worker activation:", error);
+      })
   );
 })
 
-// Interceptar las solicitudes de red
-// y servir los archivos desde la caché si están disponibles
-self.addEventListener("fetch", (event) => {
-    // Handle WASM files with correct MIME type
-    if (event.request.url.endsWith('.wasm')) {
-      event.respondWith(
-        fetch(event.request, { 
-          headers: { 'Content-Type': 'application/wasm' }
-        }).catch(() => caches.match(event.request))
-      );
-      return;
-    }
 
-    // Default cache-first strategy for other files
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request)})
+self.addEventListener("fetch", (event) => {
+  // Default cache-first strategy for other files
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      if (response) {
+        return response;
+      }
+
+      if (event.request.url.endsWith('.wasm')) {
+        return fetch(event.request, {
+          headers: { 'Content-Type': 'application/wasm' }
+        });
+      }
+
+      return fetch(event.request)
+
+
+
+    })
       .catch((error) => {
         console.error("Error fetching files:", error);
       })
-    );
+  );
 
 });
-  
+
