@@ -50,9 +50,39 @@ El proyecto está organizado de la siguiente manera:
 - **Service Worker**: Para gestionar el almacenamiento en caché y las funcionalidades offline.
 
 ### 🚀 PWA
-La aplicación está diseñada como una Progressive Web App (PWA), lo que permite:
-- **Almacenamiento en caché**: Utiliza un Service Worker (`sw.js`) para almacenar en caché los archivos estáticos esenciales, como `index.html`, `index.js`, `style.css` y los archivos generados por WebAssembly. Esto asegura que la aplicación funcione incluso sin conexión a internet.
-- **Instalación**: Incluye un archivo `manifest.json` que permite instalar la aplicación en dispositivos compatibles, ofreciendo una experiencia similar a una aplicación nativa.
+La aplicación está diseñada como una Progressive Web App (PWA)
+
+#### 🛠️ Características principales:
+
+- Service Worker (`sw.js`): Utiliza una estrategia de *cache-first* para funcionamiento *offline*. Actualmente se encuentra cacheando: HTML, CSS, JS, WASM, imágenes e íconos. A su vez, maneja la instalación, activación y fetch de datos.
+- Manifest: Personalizado con múltiples tamaños de iconos y configuración PWA, permitiendo la instalación como app nativa.
+    ```json
+    {
+      "name": "Grupo 1 - PWA",
+      "short_name": "Grupo 1",
+      "description": "Desarrollo de PWA con WASM",
+      "start_url": "./?utm_source=web_app_manifest",
+      "scope": "./",
+      "display": "standalone",
+      "theme_color": "#6f1476",
+      "background_color": "#ac00db",
+      "orientation": "portrait",
+      "lang": "es-CL",
+      "icons": [ /* 17 iconos */ ]
+    }
+    ```
+- Meta tags: Optimización para dispositivos móviles y estado de la barra de navegación
+    ```html
+    <meta name="theme-color" content="#6f1476" />
+    <meta name="MobileOptimized" content="width" />
+    <meta name="HandheldFriendly" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    ```
+- Botón de instalación: Lógica `beforeinstallprompt` y `appinstalled`
+- IndexedDB: Guardado, recuperación y gestión de miniaturas de imágenes. En particular, almacena imágenes como `dataUrl` con fecha. Estas son clickeables para restaurarlas y seguir editándolas. Por último, también se permite borrar todas las imágenes almacenadas.
+
 
 ### 🚀 WASM
 
