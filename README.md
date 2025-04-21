@@ -230,3 +230,14 @@ Una vez configuradas las herramientas, compila el proyecto a WebAssembly siguien
   ```bash
   cargo clean
   ```
+
+#### Correr Aplicación
+> [!WARNING]
+> Se necesita Instalar extensión VSCode Live Server. Para eso, abra VSCode y escriba ```ctrl+P```, escriba ```ext install ritwickdey.liveserver.```
+
+1. Clonar el repositorio mediante git.
+```bash
+git clone https://github.com/IIC3585/2025-1-s1-g1-t2.git
+```
+2. Generar la compilación y pasos previos de WebAssembly del punto anterior
+3. Inicialice live server con el index.html dentro de la carpeta raíz.
